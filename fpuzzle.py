@@ -30,10 +30,13 @@ def manhattan(x, goal, base):
     state = number2state(x, base)
     distance = 0
     for pos, num in state.items():
-        if num == 0:
-            distance += abs(maxpos - pos)
-        else:
+        if num != 0:
             distance += abs(num - 1 - pos)
+            
+        # if num == 0:
+        #     distance += abs(maxpos - pos)
+        # else:
+        #     distance += abs(num - 1 - pos)
 
     return distance
 
@@ -68,25 +71,32 @@ def neighbors(x, base):
 
     return result
 
-def solvable(start, base):
+def solvable(state, base):
     res = 0
     n = base**2
+    zero_pos = None
     for pos1 in range(n - 1):
-        if start[pos1] == 0:
-            res += int(pos1 / base) + 1
+        if state[pos1] == 0:
+            zero_pos = pos1
             continue
         
         for pos2 in range(pos1 + 1, n):
-            if start[pos2] == 0:
+            if state[pos2] == 0:
+                zero_pos = pos2
                 continue
             
-            if start[pos2] < start[pos1]:
+            if state[pos2] < state[pos1]:
                 res += 1
 
-    if res % 2 == 0:
-        return True
+    zero_row = base - int(zero_pos / base)
+    inv_even = (res % 2 == 0)
+    base_odd = (base % 2 != 0)
+    even_base_case = ((res + zero_row) % 2 != 0)
+    if base_odd:
+        return inv_even
 
-    return False
+    return even_base_case
+    
 
 def solve(start, base=4):
     if not solvable(start, base):
@@ -128,9 +138,8 @@ def test(base=4):
     n = base**2
     start = [i+1 for i in range(n)]
     start[n - 1] = 0
-    # start[1], start[2] = start[2], start[1]
+    #start[1], start[2] = start[2], start[1]
     # start[3], start[2] = start[2], start[3]
-    # random.shuffle(start)
     random.shuffle(start)
     
     start = {i : start[i] for i in range(n)}
