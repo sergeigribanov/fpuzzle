@@ -1,5 +1,6 @@
 import math
 from astar import astar
+from idastar import idastar
 import random
 
 def state2number(state, base):
@@ -111,6 +112,22 @@ def solve(start, base=4):
                  graph=lambda x: neighbors(x, base),
                  heuristic=lambda x, goal: manhattan(x, goal, base))
 
+
+def solve_ida(start, base=4):
+    if not solvable(start, base):
+        return None
+    
+    n = base**2
+    goal = {i : i + 1 for i in range(n - 1)}
+    goal[n - 1] = 0
+    startState = state2number(start, base)
+    goalState = state2number(goal, base)
+    return idastar(startState, goalState,
+                 graph=lambda x: neighbors(x, base),
+                 heuristic=lambda x, goal: manhattan(x, goal, base))
+
+
+
 def print_state(number, base):
     state = number2state(number, base)
     n = base**2
@@ -138,9 +155,19 @@ def test(base=4):
     n = base**2
     start = [i+1 for i in range(n)]
     start[n - 1] = 0
-    #start[1], start[2] = start[2], start[1]
+    # start[1], start[2] = start[2], start[1]
     # start[3], start[2] = start[2], start[3]
     random.shuffle(start)
     
     start = {i : start[i] for i in range(n)}
     print_solution(solve(start, base), base)
+
+def test_ida(base=4):
+    n = base**2
+    start = [i+1 for i in range(n)]
+    start[n - 1] = 0
+    start[1], start[2] = start[2], start[1]
+    start[3], start[2] = start[2], start[3]
+    # random.shuffle(start)
+    start = {i : start[i] for i in range(n)}
+    print_solution(solve_ida(start, base), base)
