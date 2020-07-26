@@ -166,8 +166,8 @@ def test_ida(base=4):
     n = base**2
     start = [i+1 for i in range(n)]
     start[n - 1] = 0
-    start[1], start[2] = start[2], start[1]
-    start[3], start[2] = start[2], start[3]
-    # random.shuffle(start)
+    # start[1], start[2] = start[2], start[1]
+    # start[3], start[2] = start[2], start[3]
+    random.shuffle(start)
     start = {i : start[i] for i in range(n)}
     print_solution(solve_ida(start, base), base)
